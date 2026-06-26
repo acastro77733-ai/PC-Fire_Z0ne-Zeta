@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>PowerCoder-Z</title>
+    <script>
+      // 1. Robust Polyfill for process
+      // Placed first to ensure it exists before any module imports
+      try {
+        if (typeof window !== 'undefined' && typeof window.process === 'undefined') {
+           Object.defineProperty(window, 'process', {
+             value: {
+               env: { NODE_ENV: 'development' },
+               browser: true,
+               version: ''
+             },
+             writable: true,
+             configurable: true
+           });
+        }
+      } catch (e) {
+        console.warn("Process polyfill skipped (Environment restricted)");
+      }
+    </script>
+    <script>
+        // 2. Global Error Handler for startup crashes
+        window.addEventListener('error', function(event) {
+            const root = document.getElementById('root');
+            if (root && (!root.hasChildNodes() || root.innerHTML === '')) {
+              console.error("Global Error Caught:", event.error);
+              root.innerHTML = `
+                <div style="padding: 20px; color: #ef4444; background: #1f2937; height: 100vh; font-family: monospace; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                  <div style="max-width: 600px; width: 100%;">
+                      <h1 style="font-size: 1.5rem; font-weight: bold; margin-bottom: 1rem;">Startup Error</h1>
+                      <p style="margin-bottom: 0.5rem; color: #fca5a5;">${event.message}</p>
+                      <div style="background: #111827; padding: 15px; border-radius: 0.5rem; overflow: auto; font-size: 0.875rem; color: #d1d5db; margin-bottom: 1rem; max-height: 300px;">
+                        ${event.error?.stack || 'No stack trace available'}
+                      </div>
+                      <button onclick="sessionStorage.clear(); localStorage.clear(); window.location.reload()" style="padding: 10px 20px; background: #ef4444; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600;">
+                      Reset App
+                      </button>
+                  </div>
+                </div>
+              `;
+            }
+        });
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              gray: {
+                900: '#0f1117',
+                800: '#161b22',
+                750: '#21262d',
+                700: '#30363d',
+              },
+              accent: {
+                500: '#58a6ff',
+                600: '#1f6feb',
+              }
+            },
+            fontFamily: {
+              sans: ['Inter', 'sans-serif'],
+              mono: ['JetBrains Mono', 'Fira Code', 'monospace'],
+            },
+          },
+        },
+      }
+    </script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    
+    <!-- Python Runtime -->
+    <script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
+    
+    <!-- Document Processing -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+    
+    <!-- Terminal UI -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/xterm@5.3.0/css/xterm.css" />
+    <script src="https://cdn.jsdelivr.net/npm/xterm@5.3.0/lib/xterm.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xterm-addon-fit@0.8.0/lib/xterm-addon-fit.min.js"></script>
+
+    <script type="importmap">
+{
+  "imports": {
+    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
+    "react-dom/client": "https://aistudiocdn.com/react-dom@^19.2.0/client",
+    "react-dom": "https://aistudiocdn.com/react-dom@^19.2.0",
+    "react/": "https://aistudiocdn.com/react@^19.2.0/",
+    "react": "https://aistudiocdn.com/react@^19.2.0",
+    "@google/genai": "https://aistudiocdn.com/@google/genai@^1.30.0",
+    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/"
+  }
+}
+</script>
+  <link rel="stylesheet" href="/index.css">
+</head>
+  <body class="bg-gray-900 text-gray-100 font-sans antialiased overflow-hidden selection:bg-accent-500/30">
+    <div id="root"></div>
+    <script type="module" src="/index.tsx"></script>
+  </body>
+</html>

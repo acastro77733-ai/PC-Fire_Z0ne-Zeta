@@ -1,0 +1,7 @@
+{
+  "name": "PowerCoder-Z",
+  "description": "An advanced AI coding assistant that integrates Google Gemini directly with your GitHub repositories. Generate code and push commits instantly to sync with your local development environment.",
+  "requestFramePermissions": [
+    "microphone"
+  ]
+}
